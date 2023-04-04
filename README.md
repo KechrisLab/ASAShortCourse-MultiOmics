@@ -18,11 +18,11 @@ Figure from Tarazona et al. (2021) Nature Computational Science
 
 ## All sessions are 3:00 – 4:30 PM (EASTERN)
 
-## Session 1 (April 11) - Horizontal data integration 
+## Lecture 1 (April 11) - Horizontal data integration 
 
-## Session 2 (April 13) - Unsupervised clustering of multi-omics data 
+## Lecture 2 (April 13) - Unsupervised clustering of multi-omics data 
 
-## Session 3 (April 18) - Dimension reduction for multi-omics data 
+## Lecture 3 (April 18) - Dimension reduction for multi-omics data 
 
 RMarkdown code and the corresponding .html report are located in the 'Lecture 3' subdirectory. Data is loaded through the 'r.jive' package, and so no data download is required.
 
@@ -45,4 +45,4 @@ install.packages("ggplot2")
 install.packages("ggfortify")
 
 
-## Session 4 (April 20) - Multi-omics causal mediation analysis and single cell multi-omics analysis 
+## Lecture 4 (April 20) - Multi-omics causal mediation analysis and single cell multi-omics analysis 
