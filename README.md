@@ -16,7 +16,7 @@ Instructors:
 * Jack Pattee (University of Colorado Anschutz Medical Campus)
 * Rick Chang (University of Pittsburgh) 
 
-All sessions are 3:00 – 4:30 PM (EASTERN)
+## All sessions are 3:00 – 4:30 PM (EASTERN)
 
 ## Session 1 (April 11) - Horizontal data integration 
 
