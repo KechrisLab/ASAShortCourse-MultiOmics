@@ -6,11 +6,11 @@
 
 Figure from Tarazona et al. (2021) Nature Computational Science
 
-Directors:
+## Directors:
 * George Tseng (University of Pittsburgh)
 * Katerina Kechris (University of Colorado Anschutz Medical Campus)
 
-Instructors: 
+## Instructors: 
 * Wenjia Wang (University of Pittsburgh)
 * Sierra Niemiec (University of Colorado Anschutz Medical Campus)
 * Jack Pattee (University of Colorado Anschutz Medical Campus)
