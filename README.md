@@ -24,4 +24,19 @@ Figure from Tarazona et al. (2021) Nature Computational Science
 
 ## Session 3 (April 18) - Dimension reduction for multi-omics data 
 
+RMarkdown code and the corresponding .html report are located in the 'Lecture 3' subdirectory. Data is loaded through the 'r.jive' package, and so no data download is required.
+
+Instructions for obtaining the packages required for the lab portion of the lecture are below.
+
+The following code can be used to install these packages to your default package directory. If you do not have BiocManager already installed, you will need to do so in order to download the TCGAbiolinks package. The other packages are available on CRAN.
+
+install.packages("r.jive")
+install.packages("cluster")
+install.packages("mclust")
+BiocManager::install("TCGAbiolinks")
+install.packages("survival")
+install.packages("ggplot2")
+install.packages("ggfortify")
+
+
 ## Session 4 (April 20) - Multi-omics causal mediation analysis and single cell multi-omics analysis 
