@@ -16,10 +16,12 @@ Instructors:
 * Jack Pattee (University of Colorado Anschutz Medical Campus)
 * Rick Chang (University of Pittsburgh) 
 
-## Session 1 - Horizontal data integration 
+All sessions are 3:00 – 4:30 PM (EASTERN)
 
-## Session 2 - Unsupervised clustering of multi-omics data 
+## Session 1 (April 11) - Horizontal data integration 
 
-## Session 3 - Dimension reduction for multi-omics data 
+## Session 2 (April 13) - Unsupervised clustering of multi-omics data 
 
-## Session 4 - Multi-omics causal mediation analysis and single cell multi-omics analysis 
+## Session 3 (April 18) - Dimension reduction for multi-omics data 
+
+## Session 4 (April 20) - Multi-omics causal mediation analysis and single cell multi-omics analysis 
