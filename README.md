@@ -2,6 +2,7 @@
 
 ![Picture1](https://user-images.githubusercontent.com/6655031/229678834-9fec0e0b-042d-40bc-85ce-5e42d72ea864.jpg)
 
+Figure from Tarazona et al. (2021) Nature Computational Science
 
 ## Lecture 1 - Horizontal data integration 
 
