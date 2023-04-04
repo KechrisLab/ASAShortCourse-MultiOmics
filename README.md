@@ -26,6 +26,8 @@ Figure from Tarazona et al. (2021) Nature Computational Science
 
 RMarkdown code and the corresponding .html report are located in the 'Lecture 3' subdirectory. Data is loaded through the 'r.jive' package, and so no data download is required.
 
+If there are issues downloading these files individually, one of the following will likely work: right-clicking the download link and selecting 'Save Link As', or downloading the entire repository as a .zip file and navigating to the relevant documents in the unzipped directory.
+
 Instructions for obtaining the packages required for the lab portion of the lecture are below.
 
 The following code can be used to install these packages to your default package directory. If you do not have BiocManager already installed, you will need to do so in order to download the TCGAbiolinks package. The other packages are available on CRAN.
