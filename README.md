@@ -31,11 +31,17 @@ Instructions for obtaining the packages required for the lab portion of the lect
 The following code can be used to install these packages to your default package directory. If you do not have BiocManager already installed, you will need to do so in order to download the TCGAbiolinks package. The other packages are available on CRAN.
 
 install.packages("r.jive")
+
 install.packages("cluster")
+
 install.packages("mclust")
+
 BiocManager::install("TCGAbiolinks")
+
 install.packages("survival")
+
 install.packages("ggplot2")
+
 install.packages("ggfortify")
 
 
