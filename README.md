@@ -22,7 +22,7 @@ Figure from Tarazona et al. (2021) Nature Computational Science
 
 All the materials of the first lecture including slides, leukemia data and the tutorial for **MetaOmics** tool are located in the **Lecture 1** subdirectory.
 
-The lab session about **MetaOmics** pipeline will use docker. You are suggested to download and install it before class following the instructions below or more details in the tutorial file 'MetaOmics_Tutorial.pdf':
+The lab session about **MetaOmics** pipeline will use **docker**. You are suggested to download and install it before class following the instructions below or more details in the tutorial file 'MetaOmics_Tutorial.pdf':
 
 **Install docker**: [https://www.docker.com/](https://www.docker.com/)
 
@@ -33,7 +33,7 @@ The lab session about **MetaOmics** pipeline will use docker. You are suggested 
 
 Then you can access the MetaOmics pipeline by opening [http://127.0.0.1:3838/metaOmics/](http://127.0.0.1:3838/metaOmics/) on your web browser.
 
-*(Go to [https://docs.docker.com/engine/reference/commandline/run/](https://docs.docker.com/engine/reference/commandline/run/) or use `docker run –help` in terminal for more instructions about docker.)*
+*(Go to [https://docs.docker.com/engine/reference/commandline/run/](https://docs.docker.com/engine/reference/commandline/run/) or use `docker run –help` in terminal for more instructions about **docker**.)*
 
 ## Lecture 2 (April 13) - Unsupervised clustering of multi-omics data 
 
