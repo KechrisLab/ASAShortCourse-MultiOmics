@@ -39,7 +39,7 @@ Then you can access the MetaOmics pipeline by opening [http://127.0.0.1:3838/met
 
 ## Lecture 3 (April 18) - Dimension reduction for multi-omics data 
 
-RMarkdown code and the corresponding .html report are located in the 'Lecture 3' subdirectory. Data is loaded through the 'r.jive' package, and so no data download is required.
+RMarkdown code and the corresponding .html report are located in the **Lecture 3** subdirectory. Data is loaded through the 'r.jive' package, and so no data download is required.
 
 If there are issues downloading these files individually, one of the following will likely work: right-clicking the download link and selecting 'Save Link As', or downloading the entire repository as a .zip file and navigating to the relevant documents in the unzipped directory.
 
@@ -64,8 +64,8 @@ install.packages("ggfortify")
 
 ## Lecture 4 (April 20) - Multi-omics causal mediation analysis and single cell multi-omics analysis
 
-Lecture note and the materials of lab session are located in the 'Lecture 4' subdirectory.
-Similar to the lecture 2 & 3, the following code can be used to install these packages to your default package directory.
+Lecture notes and the materials for the lab session are located in the **Lecture 4** subdirectory.
+Similar to **Lecture 2 & 3** the following code can be used to install these packages to your default package directory.
 
 install.packages("HIMA")
 
