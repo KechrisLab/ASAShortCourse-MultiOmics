@@ -62,4 +62,25 @@ install.packages("ggplot2")
 install.packages("ggfortify")
 
 
-## Lecture 4 (April 20) - Multi-omics causal mediation analysis and single cell multi-omics analysis 
+## Lecture 4 (April 20) - Multi-omics causal mediation analysis and single cell multi-omics analysis
+
+Lecture note and the materials of lab session are located in the 'Lecture 4' subdirectory.
+Similar to the lecture 2 & 3, the following code can be used to install these packages to your default package directory.
+
+install.packages("HIMA")
+
+install.packages("knitr")
+
+install.packages("ggplot2")
+
+install.packages("ggrepel")
+
+install.packages("Seurat")
+
+install.packages("devtools")
+
+devtools::install_github('satijalab/seurat-data')
+
+install.packages("cowplot")
+
+install.packages("dplyr")
