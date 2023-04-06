@@ -20,6 +20,21 @@ Figure from Tarazona et al. (2021) Nature Computational Science
 
 ## Lecture 1 (April 11) - Horizontal data integration 
 
+All the materials of the first lecture including slides, leukemia data and the tutorial for **MetaOmics** tool are located in the **Lecture 1** subdirectory.
+
+The lab session about **MetaOmics** pipeline will use docker. You are suggested to download and install it before class following the instructions below or more details in the tutorial file 'MetaOmics_Tutorial.pdf':
+
+**Install docker**: [https://www.docker.com/](https://www.docker.com/)
+
+**Run command in terminal to create a container and run MetaOmics tool:**
+
+* `docker pull metaomics/app`
+* `docker run --rm --name metaOmics -p 3838:3838 metaomics/app`
+
+Then you can access the MetaOmics pipeline by opening [http://127.0.0.1:3838/metaOmics/](http://127.0.0.1:3838/metaOmics/) on your web browser.
+
+*(Go to [https://docs.docker.com/engine/reference/commandline/run/](https://docs.docker.com/engine/reference/commandline/run/) or use `docker run –help` in terminal for more instructions about docker.)*
+
 ## Lecture 2 (April 13) - Unsupervised clustering of multi-omics data 
 
 ## Lecture 3 (April 18) - Dimension reduction for multi-omics data 
