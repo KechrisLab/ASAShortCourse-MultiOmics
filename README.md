@@ -37,6 +37,33 @@ Then you can access the MetaOmics pipeline by opening [http://127.0.0.1:3838/met
 
 ## Lecture 2 (April 13) - Unsupervised clustering of multi-omics data 
 
+A juptyer lab notebook and corresponding Rscript and pre-processed data for this lab are located in the **Lecture 2** subdirectory. Please have the data downloaded and ready to analyze prior to the lab. The data was originally sourced from the r.jive (omics data) and TCGAbiolinks (clinical data) packages.
+
+For this lab, we’ll be using the R package **MOVICS** which is a wrapper for multiple other packages and thus has many dependencies. In the most current version of R (4.2.3 “Shortstop Beagle”), you can install this package with the following command in R:
+
+```
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+    
+if (!require("devtools")) 
+    install.packages("devtools")
+    
+devtools::install_github("xlucpu/MOVICS")
+```
+
+Unfortunately, since this package has many dependencies, it will fail if any of them are unable to load. If you are presented errors that a package is missing, please install that package and try again. It may take several times. **We highly recommend ensuring this package is install prior to the lab and give ample time to ensure all dependencies are loaded.**
+
+Furthermore, **heatmap.plus** has been removed from CRAN and you may need to install it manually from source (version >= 2.5.5). To do so, go to the link below and download the files, then use the following commands to install in R:
+
+heatmap.plus: https://cran.r-project.org/src/contrib/Archive/heatmap.plus/
+
+```
+install.packages(path_to_file, repos = NULL, type="source") # path to file is for the package source code you just downloaded
+```
+
+If you continue to have trouble, **MOVICS** provides some troubleshooting guidance here: https://github.com/xlucpu/MOVICS
+
+
 ## Lecture 3 (April 18) - Dimension reduction for multi-omics data 
 
 RMarkdown code and the corresponding .html report are located in the **Lecture 3** subdirectory. Data is loaded through the 'r.jive' package, and so no data download is required.
