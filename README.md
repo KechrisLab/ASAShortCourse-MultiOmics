@@ -24,8 +24,11 @@ All the materials of the first lecture including slides, leukemia data and the t
 
 The lab session about **MetaOmics** pipeline will use **docker**. You are suggested to download and install it before class following the instructions below or more details in the tutorial file 'MetaOmics_Tutorial.pdf':
 
-**Install docker**: [https://www.docker.com/](https://www.docker.com/)
+**Install docker**: 
 
+1. For Macbook user, you can directly download and install **docker** from [https://www.docker.com/](https://www.docker.com/);
+2. For Windows user, make sure you have installed **WSL 2**. See [https://docs.docker.com/desktop/install/windows-install/](https://docs.docker.com/desktop/install/windows-install/) for specific structions of installing **docker**. *(Refer to the YouTube tutorial for [installing **WSL 2**](https://www.youtube.com/watch?v=_fntjriRe48) and [installing **docker**](https://www.youtube.com/watch?v=5RQbdMn04Oc) if you have any trouble.)*
+ 
 **Run command in terminal to create a container and run MetaOmics tool:**
 
 * `docker pull metaomics/app`
