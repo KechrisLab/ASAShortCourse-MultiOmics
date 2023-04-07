@@ -26,10 +26,10 @@ The lab session about **MetaOmics** pipeline will use **docker**. You are sugges
 
 **Install docker**: 
 
-1. For Macbook user, you can directly download and install **docker** from [https://www.docker.com/](https://www.docker.com/);
-2. For Windows user, make sure you have installed **WSL 2**. See [prerequisites and instructions](https://docs.docker.com/desktop/install/windows-install/) of installing **docker** on Windows. 
+1. **For Macbook user**, you can directly download and install **docker** from [https://www.docker.com/](https://www.docker.com/);
+2. **For Windows user**, make sure you have installed **WSL 2**. See [prerequisites and instructions](https://docs.docker.com/desktop/install/windows-install/) of installing **docker** on Windows. 
    
-*Potential trouble shooting on Windows: refer to the video tutorials for [installing **WSL 2**](https://www.youtube.com/watch?v=_fntjriRe48) and [installing **docker**](https://www.youtube.com/watch?v=5RQbdMn04Oc) if you have any trouble. Some PCs may need to further enable virtualization in BIOS, and you can follow [these steps](https://www.simplilearn.com/enable-virtualization-windows-10-article) or [this vedio](https://www.youtube.com/watch?v=X2fKuPS3yIM)).
+*Potential trouble shooting on Windows: refer to the video tutorials for [installing **WSL 2**](https://www.youtube.com/watch?v=_fntjriRe48) and [installing **docker**](https://www.youtube.com/watch?v=5RQbdMn04Oc) if you have any trouble. Some PCs may need to further enable virtualization in BIOS, and you can follow [these steps](https://www.simplilearn.com/enable-virtualization-windows-10-article) or [this video](https://www.youtube.com/watch?v=X2fKuPS3yIM).
  
 **Run command in terminal to create a container and run MetaOmics tool:**
 
