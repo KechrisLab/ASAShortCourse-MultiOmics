@@ -68,6 +68,8 @@ install.packages(path_to_file, repos = NULL, type="source") # path to file is fo
 
 If you continue to have trouble, **MOVICS** provides some troubleshooting guidance here: https://github.com/xlucpu/MOVICS
 
+Finally, if you'd like to download our example data directly from Github for the analysis, we'll have code to do so using the package *Rfssa*. Alternatively, you can directly download the "brca_dat.Rdata" file under Lecture 2.
+
 
 ## Lecture 3 (April 18) - Dimension reduction for multi-omics data 
 
