@@ -178,8 +178,14 @@ We will now explore some clustering analyses using the JIVE factors, and compare
 factorMat = scale(factorMat)
 indivPCs = scale(indivPCs)
 
-stackedData = rbind(expressionDat,methylationDat,mirnaDat)
-stackedPcs = prcomp(scale(t(stackedData)), retx = TRUE)
+###scale and norm each data type before PCA
+scaleExp = scale(t(expressionDat),scale = FALSE)
+scaleMeth = scale(t(methylationDat),scale = FALSE)
+scaleMi = scale(t(mirnaDat),scale = FALSE)
+stackedData = cbind(scaleExp/sum(abs(scaleExp)),
+                    scaleMeth/sum(abs(scaleMeth)),
+                    scaleMi/sum(abs(scaleMi)))
+stackedPcs = prcomp(stackedData, retx = TRUE)
 stackedPcFactors = scale(stackedPcs$x)
 
 jiveGap = clusGap(factorMat, FUN = kmeans, nstart = 10, K.max = 10, B = 10)
