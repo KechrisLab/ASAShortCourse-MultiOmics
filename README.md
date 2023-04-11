@@ -70,6 +70,14 @@ If you continue to have trouble, **MOVICS** provides some troubleshooting guidan
 
 Finally, if you'd like to download our example data directly from Github for the analysis, we'll have code to do so using the package *Rfssa*. Alternatively, you can directly download the "brca_dat.Rdata" file under Lecture 2.
 
+**Update**: Another attendee noted that there may be issues in installing the CIMLR package (a dependency of the MOVICS package). The user received an error regarding their gfortran library, which was installed through the homebrew gcc library on Mac. The user found that adding the following lines to their ~/.R/Makecars file resolved their issue:
+ 
+FC = /opt/homebrew/Cellar/gcc/12.2.0/bin/gfortran
+F77 = /opt/homebrew/Cellar/gcc/12.2.0/bin/gfortran
+FLIBS = -L/opt/homebrew/Cellar/gcc/12.2.0/lib/gcc/12
+
+The user referenced the following Stack Overflow exchange that may be able to provide further details: https://stackoverflow.com/questions/29992066/rcpp-warning-directory-not-found-for-option-l-usr-local-cellar-gfortran-4-8/29993906#29993906
+
 
 ## Lecture 3 (April 18) - Dimension reduction for multi-omics data 
 
