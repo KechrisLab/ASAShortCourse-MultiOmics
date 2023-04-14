@@ -1,11 +1,11 @@
-Tips for installation of MOVICS package (4/23)
+# Tips for installation of MOVICS package (4/23)
  
-•	Install heatmap.plus package from source code
+##	**Install heatmap.plus package from source code**
 NOTE: v1.3 is recommended
 R CMD: install.packages("https://cran.r-project.org/src/contrib/Archive/heatmap.plus/heatmap.plus_1.3.tar.gz", repos = NULL, type="source")
  
 
-•	Install SNFtool package from source code
+## **Install SNFtool package from source code**
 NOTE: v2.3.0 is recommended
 R CMD: install.packages("https://cran.r-project.org/src/contrib/Archive/SNFtool/SNFtool_2.3.0.tar.gz", repos = NULL, type="source")
 
