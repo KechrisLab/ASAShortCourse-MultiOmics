@@ -1,0 +1,66 @@
+Tips for installation of MOVICS package (4/23)
+ 
+•	Install heatmap.plus package from source code
+NOTE: v1.3 is recommended
+R CMD: install.packages("https://cran.r-project.org/src/contrib/Archive/heatmap.plus/heatmap.plus_1.3.tar.gz", repos = NULL, type="source")
+ 
+
+•	Install SNFtool package from source code
+NOTE: v2.3.0 is recommended
+R CMD: install.packages("https://cran.r-project.org/src/contrib/Archive/SNFtool/SNFtool_2.3.0.tar.gz", repos = NULL, type="source")
+
+
+•	How to install CIMLR with R CMD
+Reference: https://github.com/danro9685/CIMLR
+
+library("devtools")
+devtools::install_github("danro9685/CIMLR", ref = 'R')
+library("CIMLR")
+
+
+•	Troubleshooting for installing CIMLR package
+If you cannot install CIMLR package with R CMD, please try the following two solutions.
+
+Solution 1: Update R Makevars file
+In ~/.R/Makevars, add these lines.
+ 
+FC = /opt/homebrew/Cellar/gcc/12.2.0/bin/gfortran
+F77 = /opt/homebrew/Cellar/gcc/12.2.0/bin/gfortran
+FLIBS = -L/opt/homebrew/Cellar/gcc/12.2.0/lib/gcc/12
+ 
+NOTE: You can use vim to make edits to the file (https://www.linuxfoundation.org/blog/blog/classic-sysadmin-vim-101-a-beginners-guide-to-vim)
+NOTE: If the ~/.R directory doesn’t exist, you create it this way: mkdir -p ~/.R
+ 
+Solution 2: install Xcode on mac (takes ~ 30 min)
+https://developer.apple.com/download/all/?q=Xcode
+
+
+•	Make sure to install these packages
+install.packages("BiocManager")
+install.packages("devtools")
+install.packages("Matrix", dependencies = TRUE)
+  
+ 
+•	GitHub access error
+If you get an error like this:
+ 
+Using github PAT from envvar GITHUB_PAT
+Error: Failed to install 'unknown package' from GitHub:
+  HTTP error 401.
+  Bad credentials
+ 
+  Rate limit remaining: 37/60
+  Rate limit reset at: 2021-09-15 17:23:41 UTC
+ 
+Then you need to create a personal access token (PAT) and increase your GitHub API rate limit
+  - Use `usethis::browse_github_pat()` to create a Personal Access Token.
+  - Use `usethis::edit_r_environ()` and add the token as `GITHUB_PAT`.
+ 
+For example, my PAT was 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
+Sys.setenv(GITHUB_PAT = "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")
+ 
+You would do this
+Sys.setenv(GITHUB_PAT = “yourPATcode”)
+ 
+•	Install MOVICS
+devtools::install_github("xlucpu/MOVICS")
