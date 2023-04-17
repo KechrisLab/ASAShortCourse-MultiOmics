@@ -12,6 +12,10 @@
 #     install.packages("devtools")
 # devtools::install_github("xlucpu/MOVICS")
 
+install.packages("~/Downloads/SNFtool_2.3.0.tar.gz", repos = NULL, type="source") 
+
+
+
 library(MOVICS)
 set.seed(4444)
 
