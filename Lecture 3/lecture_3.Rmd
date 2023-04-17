@@ -1,0 +1,314 @@
+---
+title: "Multi-Omic Dimension Reduction"
+author: "Jack Pattee"
+date: "4/18/2023"
+output:
+  html_document:
+    code_folding: hide
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+###load relevant packages
+library(r.jive)
+library(cluster)
+library(mclust)
+library(TCGAbiolinks)
+library(survival)
+library(ggplot2)
+library(ggfortify)
+
+set.seed(3308)
+```
+
+```{r}
+###define local path to save out plot results
+localPath = "~/Documents/Miscellaneous/SISG_plots/"
+
+###Load multi-omic data breast cancer tumor data from The Cancer Genome Atlas
+data(BRCA_data)
+
+###Gene expression data
+expressionDat = Data$Expression
+
+###Methylation data
+methylationDat = Data$Methylation
+
+###micro-RNA data
+mirnaDat = Data$miRNA
+
+###run JIVE
+###too slow for live session, but determines the tuning parameters
+#jive(Data)
+###with the tuning parameters already determined
+results = jive(Data,method="given",rankJ=2,rankA=c(27,26,25))
+
+
+###use TCGA biolinks to get clinical phenotype data
+dataClin <- GDCquery_clinic(project = "TCGA-BRCA","clinical") 
+###get tumor subtype from 'morphology' variable
+###8500/3: Invasive breast carcinoma of no special type (aka Ductal Carcinoma) (estimated ~75%)
+###8520/3: Lobular carcinoma (estimated ~12 %)
+###call the rest 'other'
+###do some formatting and matching
+sampFormatted = rep(NA,ncol(expressionDat))
+for(i in 1:ncol(expressionDat)){
+  tempSplit = strsplit(colnames(expressionDat)[i],"\\.")
+  sampFormatted[i] = paste0(tempSplit[[1]][1],"-",tempSplit[[1]][2],"-",tempSplit[[1]][3])
+}
+m = match(sampFormatted,dataClin$submitter_id)
+subtypeVec = dataClin$morphology[m]
+###Define two variables
+###First: 1 for DC, 0 for other
+###Second: 1 for DC, 2 for lobular carcinoma, 0 for other
+subtypeTwo = rep(0, length(subtypeVec))
+subtypeTwo[subtypeVec=="8500/3"] = 1
+subtypeThree = rep(0, length(subtypeVec))
+subtypeThree[subtypeVec=="8500/3"] = 1
+subtypeThree[subtypeVec=="8520/3"] = 2
+
+###define survival endpoint, censored by 'days to last follow up'
+survivalTime = dataClin$days_to_death[m]
+survivalInd = rep(1, length(survivalTime))
+survivalInd[which(is.na(survivalTime))] = 0
+survivalTime[which(is.na(survivalTime))] = dataClin$days_to_last_follow_up[m][which(is.na(survivalTime))]
+###define age variable
+age = dataClin$age_at_index[m]
+
+```
+
+This document details an application of dimension reduction methods to multi-omic data from a sample of breast cancer tumors collected via The Cancer Genome Atlas. Data is available for `r ncol(expressionDat)` subjects. Data is available for three genomic variables: gene expression (with `r nrow(expressionDat)` measured genes), methylation (with `r nrow(methylationDat)` probes), and micro RNA (with `r nrow(mirnaDat)` molecules). Our goal is to explore the distribution of this data via dimension reduction approaches. We will use the JIVE method, which considers 'omic-specific and mixed factors, and stacked PCA, which does not.
+
+Although dimension reduction is a fundamentally unsupervised method, we demonstrate the utility of the dimension reduction approache with respect to some clinical variables. In particular, we consider tumor subtype and survival time. Tumor subtype is considered in two forms: dichotomized into 'ductal carcinoma' and 'other', and trichotomized into 'ductal carcinoma', 'lobular carcinoma', and 'other'. Survival is defined as the number of days to death, and is censored by the number of days to last follow up.
+
+```{r}
+###describe the distribution of tumor subtype
+print(summary(factor(subtypeThree, levels = c(0,1,2), labels = c("Other", "Ductal Carcinoma", "Lobular Carcinoma"))))
+
+###plot the survival curve
+autoplot(survfit(Surv(survivalTime,survivalInd)~1)) + xlab("Time (days)") + ylab("Survival")
+```
+
+Jive uses a permutation methodology to parse structure from residual noise, i.e., to determine the number of factors to use in the reconstruction of the joint structure and the per-omic individual structure. This permutation process can be run with the commented-out code in the code block below; however, to reduce processing time, the selected ranks have been input manually. 
+
+Show the variance explained in each of the omic data types.
+
+```{r}
+###show variance explained
+showVarExplained(results) 
+```
+
+Plot the heatmap of joint and individual variance. This needs to be saved out to a file as it does not display well within R or RMarkdown. Red represents positive values, blue represents negative values.
+
+```{r}
+png(paste0(localPath,"HeatmapsBRCA.png"),height=700,width=850)
+showHeatmaps(results)
+dev.off() 
+```
+
+Visualize the joint variation projected into two dimensions, with points colored according to the trichotomous representation of tumor subtype.
+
+```{r show-fig}
+Colors = rep('black',348)
+Colors[subtypeThree==2] = 'green'
+Colors[subtypeThree==0] = 'purple'
+showPCA(results,n_joint=2,Colors=Colors)
+legend(x = "topright", # Position
+       legend = c("DC", "LC", "Other"),   # Legend texts
+       pch = c(1,1,1),
+       col = c("black","green","purple"))  # Line colors  
+```
+
+Plot the 1-dimensional reduction of each data type-specific variation against one another to look for trends.
+
+```{r, fig.height=9, fig.width=13, fig.align='center'}
+showPCA(results,n_joint=1,n_indiv=c(1,1,1),Colors=Colors)
+```
+
+The above plots are generated via r.jive plotting functions. To have greater control of our plotting and modeling options, we extract the joint and individual factors from the JIVE decomposition as below. We will then investigate clustering and association modeling approaches, and compare how using JIVE factors perform versus PCs from stacked PCA.
+
+```{r}
+rankJV <- results$rankJ
+J<-numeric(0)
+ng<-0
+
+###get joint factors for use in plotting, clustering
+for(j in 1:length(Data)){
+  J <- rbind(J,results$joint[[j]]);
+  ng<-c(ng,dim(results$joint[[j]])[1])
+}
+svd.o <- svd(J)
+jV <- svd.o$v %*% diag(svd.o$d);
+factorMat=jV[,1:rankJV]
+
+###get factor loadings for individual data
+###code ported from jive.r 'showPCA()' function
+n_joint = 0
+n_indiv = c(2,2,2)
+l <- length(results$data)
+
+nPCs = sum(n_indiv)
+indivPCs = matrix(nrow=nPCs,ncol = dim(results$data[[1]])[2])
+PC_names = rep('',nPCs)
+
+for(i in 1:l){
+  if(n_indiv[i]>0){
+    SVD = svd(results$individual[[i]],nu=n_indiv[i],nv=n_indiv[i])
+    indices = (n_joint+sum(n_indiv[0:(i-1)])+1):(n_joint+sum(n_indiv[0:i]))
+    indivPCs[indices,] = diag(SVD$d)[1:n_indiv[i],1:n_indiv[i]]%*%t(SVD$v[,1:n_indiv[i]])
+    PC_names[indices] = paste(names(results$data)[i]," Indiv ",1:n_indiv[i]) 
+  }}
+indivPCs = t(indivPCs)
+colnames(indivPCs) = PC_names
+
+```
+
+To test whether this process was performed correctly, we can plot the first two joint factors against one another and compare to the 'showPCA()' plot from r.jive. These plots should be identical. We see that they are.
+
+```{r}
+###this should match the 'showPCA' plot above
+plot(factorMat[,2],factorMat[,1],col = Colors, xlab = "Joint Factor 2", ylab = "Joint Factor 1")
+```
+
+We will now explore some clustering analyses using the JIVE factors, and compare these approaches to clustering using the stacked principal components. First, we will compare clustering using the two joint factors from JIVE and the first two PCs from stacked principal components. We will first investigate k-means clustering and use the gap statistic to determine the optimal number of clusters.
+
+```{r}
+###normalize JIVE factors for modeling 
+factorMat = scale(factorMat)
+indivPCs = scale(indivPCs)
+
+###scale and norm each data type before PCA
+scaleExp = scale(t(expressionDat),scale = FALSE)
+scaleMeth = scale(t(methylationDat),scale = FALSE)
+scaleMi = scale(t(mirnaDat),scale = FALSE)
+stackedData = cbind(scaleExp/sum(abs(scaleExp)),
+                    scaleMeth/sum(abs(scaleMeth)),
+                    scaleMi/sum(abs(scaleMi)))
+stackedPcs = prcomp(stackedData, retx = TRUE)
+stackedPcFactors = scale(stackedPcs$x)
+
+jiveGap = clusGap(factorMat, FUN = kmeans, nstart = 10, K.max = 10, B = 10)
+plot(jiveGap, main = "Gap Statistic: JIVE, k-means, two features")
+
+stackedGap = clusGap(stackedPcFactors[,1:2], FUN = kmeans, nstart = 10, K.max = 10, B = 10)
+plot(stackedGap, main = "Gap statistic: stacked PCs, k-means, two features")
+```
+
+Plot the first and second joint factor against the first and second joint PC.
+
+```{r}
+plot(factorMat[,1],stackedPcFactors[,1],xlab = "JIVE Factor 1", ylab = "Stacked PC 1")
+legend("topleft", legend = paste0("r: ",round(cor(factorMat[,1],stackedPcFactors[,1]),2)))
+
+plot(factorMat[,2],stackedPcFactors[,2],xlab = "JIVE Factor 2", ylab = "Stacked PC 2")
+legend("topleft", legend = paste0("r: ",round(cor(factorMat[,2],stackedPcFactors[,2]),2)))
+```
+
+It appears that three clusters is optimal for both approaches. To investigate the 'quality' of these clusterings, we will compare the three cluster assignments to the trichotomous representation of tumor subtypes. Note: it could be that the clusterings are representative of structure from a different source, so this comparison is by no means an 'absolute' measure of clustering quality.
+
+```{r}
+jiveClust = kmeans(factorMat,centers = 3, nstart = 5)
+print(paste0("Adjusted Rand index for two-factor JIVE k-means clustering vs trichotomous tumor subtype: ",round(adjustedRandIndex(subtypeThree,jiveClust$cluster), 2)))
+table(data.frame(Truth = subtypeThree, JIVE = jiveClust$cluster))
+
+stackedClust = kmeans(stackedPcFactors[,1:2],centers = 3, nstart = 5)
+print(paste0("Adjusted Rand index for two-factor stacked PCA k-means clustering vs trichotomous tumor subtype: ",round(adjustedRandIndex(subtypeThree,stackedClust$cluster), 2)))
+table(data.frame(Truth = subtypeThree, Stacked = stackedClust$cluster))
+
+table(data.frame(Stacked = stackedClust$cluster, JIVE = jiveClust$cluster))
+```
+
+K-means clustering assumes spherical cluster shape, which may not be the case in our data. Allow for a more flexible clustering with Gaussian mixture models, with the BIC used to select the number of clusters and the covariance structure.
+
+```{r}
+jiveGmmBic = mclustBIC(factorMat, G = c(1:10))
+plot(jiveGmmBic, main = "BIC: Jive, GMM, two features")
+summary(jiveGmmBic)
+
+jiveGmmClust = Mclust(factorMat,x = jiveGmmBic)
+print(paste0("Adjusted Rand index for two-factor JIVE GMM clustering vs trichotomous tumor subtype: ",round(adjustedRandIndex(subtypeThree,jiveGmmClust$classification), 2)))
+table(data.frame(Truth = subtypeThree, JIVE = jiveGmmClust$classification))
+plot(jiveGmmClust, what = "classification", main = "GMM Classification: JIVE, two features")
+
+pcGmmBic = mclustBIC(stackedPcFactors[,1:2], G = c(1:10))
+plot(pcGmmBic, main = "BIC: Stacked PCA, GMM, two features")
+summary(pcGmmBic)
+
+pcGmmClust = Mclust(stackedPcs$x[,1:2],x = pcGmmBic)
+print(paste0("Adjusted Rand index for two-factor stacked PCA GMM clustering vs trichotomous tumor subtype: ",round(adjustedRandIndex(subtypeThree,pcGmmClust$classification), 2)))
+table(data.frame(Truth = subtypeThree, Stacked = pcGmmClust$classification))
+plot(pcGmmClust, what = "classification", main = "GMM Classification: stacked PCA, two features")
+
+print("Compare clustering assignments for JIVE and stacked PCA: three clusters")
+tempDatThree = data.frame(Stacked = pcGmmClust$classification, JIVE = jiveGmmClust$classification)
+table(tempDatThree)
+```
+
+It appears that JIVE performs somewhat better than stacked PCs; however, the adjusted rand indices are still quite low. Let's investigate clustering with two clusters, and see how this compares to the dichotomous representation of tumor subtypes. We will again use Gaussian mixture modeling given the apparently non-spherical cluster structure.
+
+```{r}
+jiveGmmBicTwo = mclustBIC(factorMat,G = 2)
+#summary(jiveGmmBicTwo)
+jiveGmmClustTwo = Mclust(factorMat,x = jiveGmmBicTwo)
+print(paste0("Adjusted Rand index for two-factor JIVE GMM clustering vs dichotomous tumor subtype: ",round(adjustedRandIndex(subtypeTwo,jiveGmmClustTwo$classification), 2)))
+table(data.frame(Truth = subtypeTwo,JIVE = jiveGmmClustTwo$classification))
+plot(jiveGmmClustTwo, what = "classification", main = "GMM Classification: JIVE, two features")
+
+pcGmmBicTwo = mclustBIC(stackedPcFactors[,1:2],G = 2)
+#summary(pcGmmBicTwo)
+pcGmmClustTwo = Mclust(stackedPcFactors[,1:2],x = pcGmmBicTwo)
+print(paste0("Adjusted Rand index for two-factor stacked PCA GMM clustering vs dichotomous tumor subtype: ",round(adjustedRandIndex(subtypeTwo,pcGmmClustTwo$classification), 2)))
+table(data.frame(Truth = subtypeTwo, Stacked = pcGmmClustTwo$classification))
+plot(pcGmmClustTwo, what = "classification", main = "GMM Classification: stacked PCA, two features")
+
+print("Compare clustering assignments for JIVE and stacked PCA: two clusters")
+tempDatTwo = data.frame(Stacked = pcGmmClustTwo$classification, JIVE = jiveGmmClustTwo$classification)
+table(tempDatTwo)
+```
+
+Let's see if adding additional factors changes the clustering assignment at all. We will add the first data-specific factor for each of the three data types in JIVE, and the three subsequent PCs for stacked PCA. Compare to the dichotomous representation of tumor subtype.
+
+```{r}
+jive5Factors = cbind(factorMat,indivPCs[,c(1,3,5)])
+jive5GmmBic = mclustBIC(jive5Factors, G = 2)
+#summary(jive5GmmBic)
+jive5GmmClust = Mclust(jive5Factors,x = jive5GmmBic)
+print(paste0("Adjusted Rand index for five-factor JIVE GMM clustering vs dichotomous tumor subtype: ",round(adjustedRandIndex(subtypeTwo,jive5GmmClust$classification), 2)))
+table(data.frame(Truth = subtypeTwo,JIVE = jive5GmmClust$classification))
+
+pc5GmmBic = mclustBIC(stackedPcFactors[,1:5], G = 2)
+#summary(pc5GmmBic)
+pc5GmmClust = Mclust(stackedPcFactors[,1:5],x = pc5GmmBic)
+print(paste0("Adjusted Rand index for five-factor stacked PCA GMM clustering vs dichotomous tumor subtype: ",round(adjustedRandIndex(subtypeTwo,pc5GmmClust$classification), 2)))
+table(data.frame(Truth = subtypeTwo, Stacked = pc5GmmClust$classification))
+```
+
+Estimate logistic regression models to associate derived features with the dichotomous representation of tumor subtype. Age is also included as a covariate.
+
+```{r}
+jiveDat = cbind.data.frame(subtypeTwo,jive5Factors,age)
+colnames(jiveDat) = c("y","joint1","joint2","express1","meth1","mirna1","age")
+jiveGlm = glm(y~.,data = jiveDat, family = "binomial")
+print(summary(jiveGlm))
+
+pcDat = cbind.data.frame(subtypeTwo, stackedPcFactors[,1:5],age)
+colnames(pcDat) = c("y",paste0("pc",1:5),"age")
+pcMod = glm(y~.,data = pcDat, family = "binomial")
+summary(pcMod)
+```
+
+Estimate cox proportional hazards models to associate derived features with survival outcome. Age is also included as a covariate.
+
+```{r}
+jiveDatSurv = cbind.data.frame(survivalTime,survivalInd,jive5Factors,age)
+colnames(jiveDatSurv) = c("survTime","survInd","joint1","joint2","express1","meth1","mirna1","age")
+jiveModPh = coxph(Surv(survTime,survInd)~., data = jiveDatSurv)
+summary(jiveModPh)
+
+pcDatSurv = cbind.data.frame(survivalTime,survivalInd,stackedPcFactors[,1:5],age)
+colnames(pcDatSurv) = c("survTime","survInd",paste0("pc",1:5),"age")
+pcModPh = coxph(Surv(survTime,survInd)~., data = pcDatSurv)
+summary(pcModPh)
+```
